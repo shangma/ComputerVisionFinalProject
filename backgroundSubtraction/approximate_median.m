@@ -65,6 +65,7 @@ for i = 1:1098
     
     M(i) = im2frame(uint8(fg),gray(256));           % save output as movie
     %M(i) = im2frame(uint8(bg_bw),gray);             % save output as movie
+
 end
 
 movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
