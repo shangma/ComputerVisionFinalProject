@@ -24,7 +24,7 @@ fg = zeros(height, width);
 
 images = images_iterator;
 
-for i = 1:836
+for i = 1:1098
 %    S = '../stable/';
 %     if (i < 10)
 %         S = strcat(S, '000', num2str(i));
@@ -73,12 +73,14 @@ S = images(i,:);
     M(i) = im2frame(uint8(fg),gray(256));           % save output as movie
     %M(i) = im2frame(uint8(bg_bw),gray);             % save output as movie
     
+    
+    
     outname = sprintf('stable/%d.bmp', i);
-    imwrite(M(i), outname);
+    imwrite(uint8(fg), outname);
     
 
 end
 
-movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
+%movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
 
     
