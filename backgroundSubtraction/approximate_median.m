@@ -22,9 +22,10 @@ fg = zeros(height, width);
 
 % --------------------- process frames -----------------------------------
 
+images = images_iterator;
 
-for i = 1:836
-    S = '../stable/';
+for i = 1:1098
+%    S = '../stable/';
 %     if (i < 10)
 %         S = strcat(S, '000', num2str(i));
 %     elseif (i < 100)
@@ -35,9 +36,13 @@ for i = 1:836
 %         S = strcat(S, num2str(i));
 %     end
 %     S = strcat(S, '.jpeg');
-S = strcat(S, num2str(i));
-S = strcat(S, '.bmp');
-    
+
+
+%S = strcat(S, num2str(i));
+%S = strcat(S, '.bmp');
+S = images(i,:); 
+
+
     fr = imread(S);
     fr_bw = rgb2gray(fr);       % convert frame to grayscale
     
@@ -46,7 +51,7 @@ S = strcat(S, '.bmp');
     for j=1:width                 % if fr_diff > thresh pixel in foreground
          for k=1:height
 
-             if ((fr_diff(k,j) > thresh))
+             if ((fr_diff(k,j) < thresh))
                  fg(k,j) = fr_bw(k,j);
              else
                  fg(k,j) = 0;
@@ -61,14 +66,21 @@ S = strcat(S, '.bmp');
          end    
     end
 
-    %figure(1),   
-    %subplot(2,1,1),imshow(uint8(bg_bw))
-    %subplot(2,1,2),imshow(uint8(fg))   
+    figure(1),   
+    subplot(2,1,1),imshow(uint8(bg_bw))
+    subplot(2,1,2),imshow(uint8(fg))   
     
     M(i) = im2frame(uint8(fg),gray(256));           % save output as movie
     %M(i) = im2frame(uint8(bg_bw),gray);             % save output as movie
+    
+    
+    
+    outname = sprintf('stable/%d.bmp', i);
+    imwrite(uint8(fg), outname);
+    
+
 end
 
-movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
+%movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
 
     
