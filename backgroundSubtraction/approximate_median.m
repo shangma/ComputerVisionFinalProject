@@ -23,18 +23,20 @@ fg = zeros(height, width);
 % --------------------- process frames -----------------------------------
 
 
-for i = 1:1098
-    S = '../traffic-images/traffic-';
-    if (i < 10)
-        S = strcat(S, '000', num2str(i));
-    elseif (i < 100)
-        S = strcat(S, '00', num2str(i));
-    elseif (i < 1000)
-        S = strcat(S, '0', num2str(i));
-    else
-        S = strcat(S, num2str(i));
-    end
-    S = strcat(S, '.jpeg');
+for i = 1:836
+    S = '../stable/';
+%     if (i < 10)
+%         S = strcat(S, '000', num2str(i));
+%     elseif (i < 100)
+%         S = strcat(S, '00', num2str(i));
+%     elseif (i < 1000)
+%         S = strcat(S, '0', num2str(i));
+%     else
+%         S = strcat(S, num2str(i));
+%     end
+%     S = strcat(S, '.jpeg');
+S = strcat(S, num2str(i));
+S = strcat(S, '.bmp');
     
     fr = imread(S);
     fr_bw = rgb2gray(fr);       % convert frame to grayscale
