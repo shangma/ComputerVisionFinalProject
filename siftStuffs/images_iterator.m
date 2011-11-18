@@ -3,7 +3,7 @@ function images = images_iterator
 images = [];
 
 for i = 0001:1098
-    S = 'traffic-images/traffic-';
+    S = '../traffic-images/traffic-';
     if (i < 10)
         S = strcat(S, '000', num2str(i));
     elseif (i < 100)

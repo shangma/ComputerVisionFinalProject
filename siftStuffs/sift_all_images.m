@@ -2,10 +2,12 @@ function [P,D] = sift_all_images
 
 images = images_iterator;
 
-%P = [];
-%D = [];
+N = length(images);
 
-for i = 1:length(images);
+P = zeros(N);
+D = zeros(N);
+
+for i = 1:N
    String = images(i,:);
    
    I = imread(String);
@@ -14,17 +16,9 @@ for i = 1:length(images);
    
    [FRAME, DESCRIPTOR] = vl_sift(I_single);
    
-   % im going to take the 1st and 2nd rows of FRAME. Because those are the
-   % x and y coordinates. I don't know what I am supposed to do with the
-   % 3rd and 4th rows of FRAME. Apparently the 3rd row is supposed to be
-   % the "Scale" and the 4th row is supposed to be the "Orientation"
-   
  
    P{i} = FRAME;
    D{i} = DESCRIPTOR;
-   
-   %P = [P ; FRAME(1,:) ; FRAME(2,:)];
-   %D = [D ; DESCRIPTOR];
    
 end
 
