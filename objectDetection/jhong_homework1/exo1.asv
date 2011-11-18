@@ -1,0 +1,39 @@
+%%% Juneki Hong
+%%% 9/10/11
+%%%
+
+
+
+%%
+clear all; close all;
+
+%% 1a
+lena = imread('lena.jpg');
+J = rgb2gray(lena);
+figure(1); imshow(J);
+
+%% 1bi
+gr2 = g_r(2);
+D = im2double(J);
+C = conv2(D, gr2,'same');
+figure(2);imshow(C);
+
+%% lbii
+gh2 = g_h(2);
+gv2 = g_v(2);
+D = im2double(J);
+C1 = conv2(D,gh2,'same');
+C2 = conv2(C1,gv2,'same');
+figure(3);imshow(C2);
+
+%% 1biii
+gh2 = g_h(2);
+gv2 = g_v(2);
+G = gh2*gv2;
+D = im2double(J);
+C = conv2(D,G,'same');
+figure(4);imshow(C);
+
+%all three are the same :D
+
+%% 
