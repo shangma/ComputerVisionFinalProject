@@ -8,13 +8,15 @@ clear all
 %source = mmreader('../test_video/san_fran_traffic_30sec_QVGA_Cinepak.avi');
 %source = aviread('C:\Video\Source\traffic\san_fran_traffic_30sec_QVGA');
 
-thresh = 25;
+thresh = 25;           
+
+%bg = source(1).cdata;           % read in 1st frame as background frame
 
 %bg = imread('../traffic-images/traffic-0000.jpeg');
-%bg_bw = double(rgb2gray(bg));     % convert background to greyscale
-bg = imread('mean_image.jpeg');
-bg_bw = double(bg);
 
+
+bg = imread('median_image.bmp');
+bg_bw = double(bg);     % convert background to greyscale
 
 % ----------------------- set frame size variables -----------------------
 fr_size = size(bg);             
@@ -42,7 +44,7 @@ for i = 1:1098
 
 %S = strcat(S, num2str(i));
 %S = strcat(S, '.bmp');
-    S = images(i,:); 
+S = images(i,:); 
 
 
     fr = imread(S);
@@ -71,15 +73,22 @@ for i = 1:1098
 %     figure(1),   
 %     subplot(2,1,1),imshow(uint8(bg_bw))
 %     subplot(2,1,2),imshow(uint8(fg))   
-    
+%     
     M(i) = im2frame(uint8(fg),gray(256));           % save output as movie
+    %M(i) = im2frame(uint8(bg_bw),gray);             % save output as movie
     
     
-%      outname = sprintf('stable/%d.bmp', i);
-%      imwrite(uint8(fg), outname);
     
-
+    %outname = sprintf('../videos/background_subtraction/%d.bmp', i);
+    %imwrite(uint8(fg), outname);
+    
+    
 end
+
+% imshow(uint8(bg_bw));
+% imwrite(uint8(bg_bw),'median_image.bmp');
+% save medianImageStuff.mat;
+
 
 movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
 
