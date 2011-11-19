@@ -3,10 +3,10 @@ M = [];
 image_length = size(IMAGE,1);
 image_width = size(IMAGE,2);
 
-white_pixel_threshold = size_window*size_window/1.15;
+white_pixel_threshold = size_window*size_window/2;
 
-for i=1:1000%image_length
-   for j=1:1000%image_width 
+for i=1:(size_window/2):image_length
+   for j=1:(size_window/2):image_width 
        
        [X_min, X_max, Y_min, Y_max] = box_Bounding_Calculator(i,j,size_window,image_length,image_width);
        subImage = IMAGE(X_min:X_max,Y_min:Y_max);

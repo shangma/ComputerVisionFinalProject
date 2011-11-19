@@ -1,4 +1,5 @@
 function [X_min, X_max, Y_min, Y_max] = box_Bounding_Calculator(X_coord,Y_coord,size_window, image_length, image_width)
+size_window = size_window/2;
 
 X_min = X_coord - size_window;
 X_max = X_coord + size_window;
