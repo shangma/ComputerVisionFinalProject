@@ -8,11 +8,13 @@ clear all
 %source = mmreader('../test_video/san_fran_traffic_30sec_QVGA_Cinepak.avi');
 %source = aviread('C:\Video\Source\traffic\san_fran_traffic_30sec_QVGA');
 
-thresh = 25;           
+thresh = 25;
 
-%bg = source(1).cdata;           % read in 1st frame as background frame
-bg = imread('../traffic-images/traffic-0000.jpeg');
-bg_bw = double(rgb2gray(bg));     % convert background to greyscale
+%bg = imread('../traffic-images/traffic-0000.jpeg');
+%bg_bw = double(rgb2gray(bg));     % convert background to greyscale
+bg = imread('mean_image.jpeg');
+bg_bw = double(bg);
+
 
 % ----------------------- set frame size variables -----------------------
 fr_size = size(bg);             
@@ -40,7 +42,7 @@ for i = 1:1098
 
 %S = strcat(S, num2str(i));
 %S = strcat(S, '.bmp');
-S = images(i,:); 
+    S = images(i,:); 
 
 
     fr = imread(S);
@@ -51,7 +53,7 @@ S = images(i,:);
     for j=1:width                 % if fr_diff > thresh pixel in foreground
          for k=1:height
 
-             if ((fr_diff(k,j) < thresh))
+             if ((fr_diff(k,j) > thresh))
                  fg(k,j) = fr_bw(k,j);
              else
                  fg(k,j) = 0;
@@ -66,21 +68,19 @@ S = images(i,:);
          end    
     end
 
-    figure(1),   
-    subplot(2,1,1),imshow(uint8(bg_bw))
-    subplot(2,1,2),imshow(uint8(fg))   
+%     figure(1),   
+%     subplot(2,1,1),imshow(uint8(bg_bw))
+%     subplot(2,1,2),imshow(uint8(fg))   
     
     M(i) = im2frame(uint8(fg),gray(256));           % save output as movie
-    %M(i) = im2frame(uint8(bg_bw),gray);             % save output as movie
     
     
-    
-    outname = sprintf('stable/%d.bmp', i);
-    imwrite(uint8(fg), outname);
+%      outname = sprintf('stable/%d.bmp', i);
+%      imwrite(uint8(fg), outname);
     
 
 end
 
-%movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
+movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
 
     
