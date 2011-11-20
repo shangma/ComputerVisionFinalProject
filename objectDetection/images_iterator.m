@@ -24,7 +24,8 @@ function images = images_iterator
 % end
 
 for i = 1:1098
-   S = '../background_subtraction_images/'; 
+   %S = '../background_subtraction_images/'; 
+   S = '../ignore_house_images/';
    S = strcat(S,num2str(i));
    S = strcat(S,'.bmp');
    
