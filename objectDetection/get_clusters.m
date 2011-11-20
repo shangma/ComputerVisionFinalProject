@@ -1,4 +1,4 @@
-function [P] = get_cluster(M,wind_size)
+function [P] = get_clusters(M,wind_size)
 
 thresh = .5 * wind_size;
 p = libpointer;
@@ -6,7 +6,6 @@ i = 1;
 
 while ~isempty(M)
     P{i} = [];
-    disp(i);
     if isempty(P{i});
         P{i} = M(1,:);
         M(1,:) = [];
