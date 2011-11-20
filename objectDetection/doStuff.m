@@ -1,5 +1,7 @@
 %function doStuff()
 
+warning off all;
+
 close all;
 
 images = images_iterator;
@@ -8,11 +10,11 @@ images = images_iterator;
 % M = bounding_box_iterator(I,40);
 % P = get_clusters(M,40);
 % USING = 243;
-% 
+%
 % imshow(I);
 % hold on;
 % %plot(M(:,2),M(:,1),'r*');
-% 
+%
 % disp(length(P));
 % for i = 1:length(P)
 %     disp(P{i});
@@ -24,40 +26,37 @@ images = images_iterator;
 
 
 
-for i = 243 %1:10
-    
-    I = imread(images{i});
-    USING = i;
-    
-    CARS = [];
-    CARS = car_detector(CARS,I);
-    
-%     ORIGINAL_IMAGES{i} = I;
-%     CAR_LIST{i} = CARS;
-    figure;
-    imshow(I);
-    hold on;
-    plot(CARS(:,2),CARS(:,1),'y*');
+%for i = 243 %1:10
+i = 243;
+I = imread(images{i});
+USING = i;
+
+figure;
+imshow(I);
+hold on;
+
+[CARS_DETECTED,I] = car_detector([],I);
+
+figure;
+imshow(I);
+hold on;
+
+plot(CARS_DETECTED(:,2),CARS_DETECTED(:,1),'b*');
 
 
-    I = detected_object_eraser(I,CARS);
-    
-    figure;
-    imshow(I);
-    
-    
-%     ERASED_IMAGES{i} = I;
-     
-    PEOPLE = [];
-    PEOPLE = people_detector(PEOPLE,I);
-    
-    figure;
-    imshow(I);
-    hold on;
-    plot(PEOPLE(:,2),PEOPLE(:,1),'y*');
-%     
-%     PEOPLE_LIST{i} = PEOPLE;
 
-end
+
+
+%
+%
+%     PEOPLE = [];
+%     PEOPLE = people_detector(PEOPLE,I);
+%
+%     figure;
+%     imshow(I);
+%     hold on;
+%     plot(PEOPLE(:,2),PEOPLE(:,1),'y*');
+
+% end
 
 %end
