@@ -1,37 +1,37 @@
 function images = images_iterator
 
 
-% images = [];
-% 
-% for i = 0001:1098
-%     S = '../traffic-images/traffic-';
-%     if (i < 10)
-%         S = strcat(S, '000', num2str(i));
-%     elseif (i < 100)
-%         S = strcat(S, '00', num2str(i));
-%     elseif (i < 1000)
-%         S = strcat(S, '0', num2str(i));
-%     else
-%         S = strcat(S, num2str(i));
-%     end
-%     S = strcat(S, '.jpeg');
-%     %I = imread(S);
-%     %I = im2double(I);
-%     %I = I(:)';   
-%     %images = [images; I];
-%     images = [images;S];
-% 
-% end
+images = [];
 
-for i = 1:1098
-   %S = '../background_subtraction_images/'; 
-   S = '../ignore_house_images/';
-   S = strcat(S,num2str(i));
-   S = strcat(S,'.bmp');
-   
-   images{i} = S;
-   
+for i = 0001:1098
+    S = '../traffic-images/traffic-';
+    if (i < 10)
+        S = strcat(S, '000', num2str(i));
+    elseif (i < 100)
+        S = strcat(S, '00', num2str(i));
+    elseif (i < 1000)
+        S = strcat(S, '0', num2str(i));
+    else
+        S = strcat(S, num2str(i));
+    end
+    S = strcat(S, '.jpeg');
+    %I = imread(S);
+    %I = im2double(I);
+    %I = I(:)';   
+    %images = [images; I];
+    images{i} = S;
+
 end
+% 
+% for i = 1:1098
+%    %S = '../background_subtraction_images/'; 
+%    S = '../ignore_house_images/';
+%    S = strcat(S,num2str(i));
+%    S = strcat(S,'.bmp');
+%    
+%    images{i} = S;
+%    
+% end
 
 
 
