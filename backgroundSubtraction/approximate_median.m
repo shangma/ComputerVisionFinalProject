@@ -9,14 +9,12 @@ clear all
 %source = aviread('C:\Video\Source\traffic\san_fran_traffic_30sec_QVGA');
 
 thresh = 25;           
+load('median.mat','median');
 
 %bg = source(1).cdata;           % read in 1st frame as background frame
-
-%bg = imread('../traffic-images/traffic-0000.jpeg');
-
-
-bg = imread('median_image.bmp');
-bg_bw = double(bg);     % convert background to greyscale
+bg = imread('../traffic-images/traffic-0000.jpeg');
+bg_bw = double(rgb2gray(bg));     % convert background to greyscale
+mask_bw = double(rgb2gray(imread('mask.bmp')));
 
 % ----------------------- set frame size variables -----------------------
 fr_size = size(bg);             
@@ -26,10 +24,9 @@ fg = zeros(height, width);
 
 % --------------------- process frames -----------------------------------
 
-images = images_iterator;
 
-for i = 1:1098
-%    S = '../stable/';
+for i = 1:836
+    S = '../stable/';
 %     if (i < 10)
 %         S = strcat(S, '000', num2str(i));
 %     elseif (i < 100)
@@ -40,28 +37,31 @@ for i = 1:1098
 %         S = strcat(S, num2str(i));
 %     end
 %     S = strcat(S, '.jpeg');
-
-
-%S = strcat(S, num2str(i));
-%S = strcat(S, '.bmp');
-S = images(i,:); 
-
-
+S = strcat(S, num2str(i));
+S = strcat(S, '.bmp');
+    
     fr = imread(S);
     fr_bw = rgb2gray(fr);       % convert frame to grayscale
     
-    fr_diff = abs(double(fr_bw) - double(bg_bw));  % cast operands as double to avoid negative overflow
+    if (i < 100)
+        fr_diff = abs(double(fr_bw) - double(median));  % cast operands as double to avoid negative overflow
+    else
+        fr_diff = abs(double(fr_bw) - double(bg_bw));  % cast operands as double to avoid negative overflow
+    end
 
     for j=1:width                 % if fr_diff > thresh pixel in foreground
          for k=1:height
-
-             if ((fr_diff(k,j) > thresh))
-                 fg(k,j) = fr_bw(k,j);
-             else
+             if mask_bw(k,j) == 0
                  fg(k,j) = 0;
+             else
+                 if ((fr_diff(k,j) > thresh))
+                     fg(k,j) = fr_bw(k,j);
+                 else
+                     fg(k,j) = 0;
+                 end
              end
 
-             if (fr_bw(k,j) > bg_bw(k,j))          
+             if (fr_bw(k,j) > bg_bw(k,j))
                  bg_bw(k,j) = bg_bw(k,j) + 1;           
              elseif (fr_bw(k,j) < bg_bw(k,j))
                  bg_bw(k,j) = bg_bw(k,j) - 1;     
@@ -70,26 +70,16 @@ S = images(i,:);
          end    
     end
 
-%     figure(1),   
-%     subplot(2,1,1),imshow(uint8(bg_bw))
-%     subplot(2,1,2),imshow(uint8(fg))   
-%     
+    %figure(1),
+    %subplot(2,1,1),imshow(uint8(bg_bw))
+    %subplot(2,1,2),imshow(uint8(fg))   
+    
     M(i) = im2frame(uint8(fg),gray(256));           % save output as movie
     %M(i) = im2frame(uint8(bg_bw),gray);             % save output as movie
     
-    
-    
-    %outname = sprintf('../videos/background_subtraction/%d.bmp', i);
-    %imwrite(uint8(fg), outname);
-    
-    
+    %outname = sprintf('../output/%d.bmp', i);
+    %imwrite(fg, outname);
+    i
 end
 
-% imshow(uint8(bg_bw));
-% imwrite(uint8(bg_bw),'median_image.bmp');
-% save medianImageStuff.mat;
-
-
-movie2avi(M,'approximate_median_background','fps',30);           % save movie as avi    
-
-    
+movie2avi(M,'test','fps',30);           % save movie as avi    
