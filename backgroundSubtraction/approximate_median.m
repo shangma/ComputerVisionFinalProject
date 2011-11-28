@@ -2,14 +2,29 @@
 % subtraction.  It may be used free of charge for any purpose (commercial
 % or otherwise), as long as the author (Seth Benton) is acknowledged.
 
-clear all
+clear all;
 
 %source = mmreader('../test_video/traffic.avi');
 %source = mmreader('../test_video/san_fran_traffic_30sec_QVGA_Cinepak.avi');
 %source = aviread('C:\Video\Source\traffic\san_fran_traffic_30sec_QVGA');
 
-thresh = 25;           
+thresh = 25;
 load('median.mat','median');
+
+f = imread('../traffic-images/traffic-0001.jpeg');
+%f = double(rgb2gray(f)); 
+
+%diff = f - double(uint8(median));
+
+%imshow(diff);
+
+t = f(:,:);
+
+diff2 = backnoise(t,median);
+
+imshow(diff2);
+
+%%
 
 %bg = source(1).cdata;           % read in 1st frame as background frame
 bg = imread('../traffic-images/traffic-0000.jpeg');
@@ -23,7 +38,6 @@ height = fr_size(1);
 fg = zeros(height, width);
 
 % --------------------- process frames -----------------------------------
-
 
 for i = 1:836
     S = '../stable/';
