@@ -42,6 +42,7 @@ while i< size(tracked,1)
         tracked(i,1) = detected(minDistanceIndex).Centroid(2);
         
         detected(minDistanceIndex) = [];
+        
     else
         taxi_mean_r = 127;
         taxi_mean_g = 132;
@@ -64,8 +65,13 @@ while i< size(tracked,1)
         bike_std_g = 13;
         bike_std_b = 13;
         
+<<<<<<< Updated upstream
         radius_x = floor(trackedPoint(7)/2);
         radius_y = floor(trackedPoint(8)/2);
+=======
+        %scan around for it
+        
+>>>>>>> Stashed changes
         
         bottomRightX = predictedX + radius_x;
         bottomRightY = predictedY + radius_y;
@@ -113,8 +119,12 @@ while i< size(tracked,1)
         end
     end
     
+    
+    
     i = i+1;
     
 end
+
+
 
 end
