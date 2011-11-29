@@ -6,7 +6,6 @@ sedisk = strel('disk',2);
 
 nframes = get(trafficObj, 'NumberOfFrames');
 I = read(trafficObj, 1);
-%taggedCars = zeros([size(I,1) size(I,2) 3 nframes], class(I));
 taggedCars = zeros([480 720 3 nframes], class(I));
 
 taxi_mean_r = 127;
@@ -32,6 +31,7 @@ bike_std_b = 13;
 
 registration_data = [];
 tracking_data = [];
+abc123 = [];
 
 % for k = 1 : nframes
 for k = 1 : nframes
@@ -44,7 +44,7 @@ for k = 1 : nframes
     %filtered = imextendedmax(I, filterValue);
     
     filtered = imopen(I, sedisk);
-    filtered = bwareaopen(filtered, 200);
+    filtered = bwareaopen(filtered, 120);
     
     L = bwlabel(filtered);
     
@@ -56,7 +56,7 @@ for k = 1 : nframes
     if any(L(:))
         stats = regionprops(L, {'centroid','area','BoundingBox'});
         stats2 = stats;
-        [stats2 tracking_data] = tracked(stats2,tracking_data);
+        [stats2 tracking_data] = tracked(stats2,tracking_data,realFrame);
         [stats2 registration_data tracking_data] = registration(stats2,registration_data, tracking_data);
         
         for q = 1 : size(tracking_data,1)
@@ -118,7 +118,7 @@ for k = 1 : nframes
                     value2 = 255;
                     value3 = 255;
                 elseif tracking_data(idx,9) == 3
-                    value1 = 0;
+                    value1 = 255;
                     value2 = 0;
                     value3 = 0;
                 elseif tracking_data(idx,9) == 4
@@ -127,22 +127,23 @@ for k = 1 : nframes
                     value3 = 0;
                 end
                 
-                
-                taggedCars(top_left_y,top_left_x:top_right_x,1,k) = value1;
-                taggedCars(top_left_y,top_left_x:top_right_x,2,k) = value2;
-                taggedCars(top_left_y,top_left_x:top_right_x,3,k) = value3;
-                
-                taggedCars(bottom_left_y,bottom_left_x:bottom_right_x,1,k) = value1;
-                taggedCars(bottom_left_y,bottom_left_x:bottom_right_x,2,k) = value2;
-                taggedCars(bottom_left_y,bottom_left_x:bottom_right_x,3,k) = value3;
-                
-                taggedCars(top_left_y:bottom_left_y,top_left_x,1,k) = value1;
-                taggedCars(top_left_y:bottom_left_y,top_left_x,2,k) = value2;
-                taggedCars(top_left_y:bottom_left_y,top_left_x,3,k) = value3;
-                
-                taggedCars(top_left_y:bottom_left_y,top_right_x,1,k) = value1;
-                taggedCars(top_left_y:bottom_left_y,top_right_x,2,k) = value2;
-                taggedCars(top_left_y:bottom_left_y,top_right_x,3,k) = value3;
+                if tracking_data(idx,9) == 1 || tracking_data(idx,9) == 2 || 1 == 1
+                    taggedCars(top_left_y,top_left_x:top_right_x,1,k) = value1;
+                    taggedCars(top_left_y,top_left_x:top_right_x,2,k) = value2;
+                    taggedCars(top_left_y,top_left_x:top_right_x,3,k) = value3;
+                    
+                    taggedCars(bottom_left_y,bottom_left_x:bottom_right_x,1,k) = value1;
+                    taggedCars(bottom_left_y,bottom_left_x:bottom_right_x,2,k) = value2;
+                    taggedCars(bottom_left_y,bottom_left_x:bottom_right_x,3,k) = value3;
+                    
+                    taggedCars(top_left_y:bottom_left_y,top_left_x,1,k) = value1;
+                    taggedCars(top_left_y:bottom_left_y,top_left_x,2,k) = value2;
+                    taggedCars(top_left_y:bottom_left_y,top_left_x,3,k) = value3;
+                    
+                    taggedCars(top_left_y:bottom_left_y,top_right_x,1,k) = value1;
+                    taggedCars(top_left_y:bottom_left_y,top_right_x,2,k) = value2;
+                    taggedCars(top_left_y:bottom_left_y,top_right_x,3,k) = value3;
+                end
                 
                 %                 border = 10;
                 %                 try
@@ -156,15 +157,25 @@ for k = 1 : nframes
             %end
         end
         
-%         imshow(taggedCars(:,:,:,k));
+%                 imshow(taggedCars(:,:,:,k));
 %         
-%         for z = 1 : length(stats)
-%             idx = z;
-%             c = stats(idx).Centroid;
-%             c = floor(fliplr(c));
-%             
-%             text(c(2),c(1),{sprintf('%d',z)});
-%         end
+%                 for z = 1 : length(stats)
+%                     idx = z;
+%                     c = stats(idx).Centroid;
+%                     c = floor(fliplr(c));
+%         
+%                     text(c(2),c(1),{sprintf('%d',z)});
+%                 end
+%                 
+%                 if k > 1
+%                     F(k-1) = getframe;
+%                 end
+                
+%                 temp123 = getframe;
+%                 temp123 = temp123.cdata;
+%                 taggedCars(:,:,1,k) = temp123(:,:,1);
+%                 taggedCars(:,:,2,k) = temp123(:,:,2);
+%                 taggedCars(:,:,3,k) = temp123(:,:,3);
         
         %areaArray = [stats.Area];
         %[junk,idx] = max(areaArray);
@@ -176,3 +187,13 @@ for k = 1 : nframes
     
     k
 end
+
+% X = F
+% for i = 1 : length(X)
+% 	t = size(F(i).cdata);
+% 	if t(1) == 481 && t(2) == 721
+% 	
+% 	else
+% 		X(i) = []
+% 	end
+% end

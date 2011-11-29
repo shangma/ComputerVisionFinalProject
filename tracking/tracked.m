@@ -1,6 +1,12 @@
-function [detected,tracked] = tracked(detected,tracked)
+function [detected,tracked] = tracked(detected,tracked,realFrame)
 
 THRESHOLD = 10;
+
+% for i = 1 : size(tracked,1)
+%    if tracked(i,9) > 0
+%        
+%    end
+% end
 
 i = 1;
 while i< size(tracked,1)
@@ -36,65 +42,79 @@ while i< size(tracked,1)
         tracked(i,1) = detected(minDistanceIndex).Centroid(2);
         
         detected(minDistanceIndex) = [];
-        
     else
-        %if no detected objects are close...
+        taxi_mean_r = 127;
+        taxi_mean_g = 132;
+        taxi_mean_b = 111;
+        taxi_std_r = 13;
+        taxi_std_g = 12;
+        taxi_std_b = 12;
         
+        car_mean_r = 145;
+        car_mean_g = 150;
+        car_mean_b = 158;
+        car_std_r = 17;
+        car_std_g = 15;
+        car_std_b = 14;
         
-         
-        %if we dont, delete the tracked object...
-        tracked(i,:) = [-1 -1 -1 -1 -1 -1 -1 -1 -1];
-        %i = i-1;
+        bike_mean_r = 106;
+        bike_mean_g = 111;
+        bike_mean_b = 122;
+        bike_std_r = 12;
+        bike_std_g = 13;
+        bike_std_b = 13;
         
+        radius_x = floor(trackedPoint(7)/2);
+        radius_y = floor(trackedPoint(8)/2);
+        
+        bottomRightX = predictedX + radius_x;
+        bottomRightY = predictedY + radius_y;
+        
+        for a = 1 : 3
+            for b = 1 : 3
+                centerX = bottomRightX - (a-1)*radius_x;
+                centerY = bottomRightY - (a-1)*radius_y;
+                top_left_x = centerX - radius_x;
+                top_left_y = centerY - radius_y;
+                bottom_left_y = centerY + radius_y;
+                top_right_x = centerX + radius_x;
+                
+                if (top_left_x > 0) && (top_right_x < 720) && (top_left_y > 0) && (bottom_left_y < 480)
+                    temp = realFrame(top_left_y:bottom_left_y,top_left_x:top_right_x,:);
+                    
+                    [r,g,b] = rgb_mean(temp);
+                    num_std = 1.3;
+                    
+                    tracked(i,1) = predictedX;
+                    tracked(i,2) = predictedY;
+                    
+                    if tracked(i,9) == 1 && abs(taxi_mean_r-r) < num_std*taxi_std_r && abs(taxi_mean_g-g) < num_std*taxi_std_g && abs(taxi_mean_b-b) < num_std*taxi_std_b
+                        tracked(i,3) = tracked(i,1);
+                        tracked(i,4) = tracked(i,2);
+                        %disp('Tracked');
+                        break;
+                    elseif tracked(i,9) == 2 && abs(car_mean_r-r) < num_std*car_std_r && abs(car_mean_g-g) < num_std*car_std_g && abs(car_mean_b-b) < num_std*car_std_b
+                        tracked(i,3) = tracked(i,1);
+                        tracked(i,4) = tracked(i,2);
+                        %disp('Tracked');
+                        break;
+                    elseif tracked(i,9) == 3 && abs(bike_mean_r-r) < num_std*bike_std_r && abs(bike_mean_g-g) < num_std*bike_std_g && abs(bike_mean_b-b) < num_std*bike_std_b
+                        tracked(i,3) = tracked(i,1);
+                        tracked(i,4) = tracked(i,2);
+                        %disp('Tracked');
+                        break;
+                    else
+                        tracked(i,:) = [-1 -1 -1 -1 -1 -1 -1 -1 -1];
+                    end
+                else
+                    tracked(i,:) = [-1 -1 -1 -1 -1 -1 -1 -1 -1];
+                end
+            end
+        end
     end
-    
-    
     
     i = i+1;
     
 end
 
-
-
 end
-
-
-
-
-
-
-%
-%
-%
-% %F1 = 1 frame ago
-% %F2 = 2 frames ago
-% function [] = track(P, thisFrame, thresh)
-%     [x,y] = size(P);
-%     predictedFrame = [];
-%     for i = 1:x
-%         [predictedFrame(i,1), predictedFrame(i,2)] = predictNextPoint(P(i,1),P(i,2),P(i,3),P(i,4));
-%         predictedFrame(i,3) = P(i,1);
-%         predictedFrame(i,4) = P(i,2);
-%         predictedFrame(i,5) = P(i,3);
-%         predictedFrame(i,6) = P(i,4);
-%
-%     end
-%
-%     [x,y] = size(thisFrame);
-%     [x2,y2] = size(predictedFrame);
-%     found = 0;
-%     for i = 1:x
-%         for j = 1:x2
-%             if pointsCloseEnough(thisFrame(i,1),thisFrame(i,2),predictedFrame(j,1),predictedFrame(j,2),thresh)
-%                 predictedFrame(j,5) = predictedFrame(j,3);
-%                 predictedFrame(j,6) = predictedFrame(j,4);
-%                 predictedFrame(j,3) = thisFrame(i,1);
-%                 predictedFrame(j,4) = thisFarme(i,2);
-%                 found = 1;
-%             end
-%         end
-%         if found == 0
-%
-%         end
-%     end
-% end
