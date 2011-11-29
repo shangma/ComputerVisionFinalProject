@@ -10,5 +10,4 @@ b = y1 -slope*x1;
 X = xDifference + x2;
 Y = X*slope + b;
 
-
 end

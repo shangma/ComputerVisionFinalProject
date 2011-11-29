@@ -36,14 +36,11 @@ for k = 1 : nframes
     realFrame = read(realObj, k);
     I = rgb2gray(singleFrame);
     
-    %real = imread(sprintf('stable/%d.bmp',k));
-    
-    % imshow(realFrame);
-    
+    %real = imread(sprintf('stable/%d.bmp',k));s
+    %imshow(realFrame);
     %filtered = imextendedmax(I, filterValue);
     
     filtered = imopen(I, sedisk);
-    
     filtered = bwareaopen(filtered, 200);
     
     L = bwlabel(filtered);
