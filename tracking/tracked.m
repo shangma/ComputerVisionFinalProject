@@ -83,7 +83,7 @@ while i< size(tracked,1)
                     temp = realFrame(top_left_y:bottom_left_y,top_left_x:top_right_x,:);
                     
                     [r,g,b] = rgb_mean(temp);
-                    num_std = 1.3;
+                    num_std = 1.5;
                     
                     tracked(i,1) = predictedX;
                     tracked(i,2) = predictedY;

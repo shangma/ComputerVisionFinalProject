@@ -1,3 +1,4 @@
+warning off all;
 realObj = mmreader('../backgroundSubtraction/real.avi');
 trafficObj = mmreader('../backgroundSubtraction/approximate_median_background.avi');
 
@@ -44,7 +45,7 @@ for k = 1 : nframes
     %filtered = imextendedmax(I, filterValue);
     
     filtered = imopen(I, sedisk);
-    filtered = bwareaopen(filtered, 120);
+    filtered = bwareaopen(filtered, 150);
     
     L = bwlabel(filtered);
     
@@ -55,6 +56,20 @@ for k = 1 : nframes
     
     if any(L(:))
         stats = regionprops(L, {'centroid','area','BoundingBox'});
+        q = 1;
+        
+        while q < size(stats,1)
+           temp = stats(q);
+           temp_x = temp.BoundingBox(3);
+           temp_y = temp.BoundingBox(4);
+           
+           if temp_x < 10 || temp_x > 150 || temp_y < 10 || temp_y > 150
+               stats(q) = [];
+               q = q-1;
+           end
+           q = q+1;
+        end
+        
         stats2 = stats;
         [stats2 tracking_data] = tracked(stats2,tracking_data,realFrame);
         [stats2 registration_data tracking_data] = registration(stats2,registration_data, tracking_data);
@@ -95,7 +110,7 @@ for k = 1 : nframes
                 
                 [r,g,b] = rgb_mean(temp1);
                 
-                num_std = 1.3;
+                num_std = 1.5;
                 
                 if tracking_data(idx,9) == -1
                     if abs(taxi_mean_r-r) < num_std*taxi_std_r && abs(taxi_mean_g-g) < num_std*taxi_std_g && abs(taxi_mean_b-b) < num_std*taxi_std_b
