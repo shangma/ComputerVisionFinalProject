@@ -43,8 +43,8 @@ while i< size(tracked,1)
         
          
         %if we dont, delete the tracked object...
-        tracked(i,:) = [];
-        i = i-1;
+        tracked(i,:) = [-1 -1 -1 -1 -1 -1 -1 -1 -1];
+        %i = i-1;
         
     end
     

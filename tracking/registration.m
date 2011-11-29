@@ -91,8 +91,20 @@ while k<=size(registered,1)
     else
         if registered(k,9) == 3
             %add it to tracked
-              
-            tracked = [tracked ; registered(k,1:8)];
+            
+            found = -1;
+            for z = 1: size(tracked,1)
+               if tracked(z,1) == -1
+                   tracked(z,1:8) = registered(k,1:8);
+                   found = 1;
+                   break;
+               end
+            end
+            
+            if found == -1
+                tracked = [tracked; registered(k,1:8) -1];
+            end
+            
             registered = deleteEntry(registered,k);
             k = k-1;
         end
