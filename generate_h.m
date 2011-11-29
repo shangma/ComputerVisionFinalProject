@@ -6,12 +6,12 @@ imagesLength = length(images);
 
 referenceFrame = 1;
 
-load('trim2.mat','P','D');
+load('trim.mat','P','D');
 %load('m1m2.mat','A','B');
 %load('stabilize.mat','A','B','C');
 I1 = im2double(imread(images(referenceFrame,:)));
 
-for i = 1 : 200
+for i = 836 : 1098
      p1 = P{referenceFrame};
      p2 = P{i};
      d1 = D{referenceFrame};
@@ -27,9 +27,11 @@ for i = 1 : 200
 
     [H] = RANSAC_ndlt(m1,m2);
     
-    A{i} = m1;
-    B{i} = m2;
-    C{i} = H;
+    index = i-835;
+    
+    A{index} = m1;
+    B{index} = m2;
+    C{index} = H;
     
     I2 = im2double(imread(images(i,:)));
     K = blend(I1,I2,H);

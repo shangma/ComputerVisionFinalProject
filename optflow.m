@@ -147,6 +147,16 @@ for k = 1 : nframes
             end
             %end
         end
+        
+        imshow(taggedCars(:,:,:,k)); 
+        
+        for z = 1 : length(stats)
+            idx = z;
+            c = stats(idx).Centroid;
+            c = floor(fliplr(c));
+            
+            text(c(2),c(1),{sprintf('%d',z)});
+        end
         %areaArray = [stats.Area];
         %[junk,idx] = max(areaArray);
         
