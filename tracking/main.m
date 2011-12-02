@@ -45,8 +45,8 @@ for k = 1 : nframes
     %filtered = imextendedmax(I, filterValue);
     
     filtered = imopen(I, sedisk);
-    filtered = bwareaopen(filtered, 150);
-    
+    %filtered = bwareaopen(filtered, 200);
+   
     L = bwlabel(filtered);
     
     %real = im2frame(uint8(real),gray(256));
@@ -83,6 +83,7 @@ for k = 1 : nframes
         
         for z = 1 : length(stats)
             idx = z;
+            %tracking_data(idx,9) = -1;
             c = stats(idx).Centroid;
             c = floor(fliplr(c));
             [width] = stats(idx).BoundingBox;
@@ -115,7 +116,7 @@ for k = 1 : nframes
                 if tracking_data(idx,9) == -1
                     if abs(taxi_mean_r-r) < num_std*taxi_std_r && abs(taxi_mean_g-g) < num_std*taxi_std_g && abs(taxi_mean_b-b) < num_std*taxi_std_b
                         tracking_data(idx,9) = 1;
-                    elseif abs(car_mean_r-r) < num_std*car_std_r && abs(car_mean_g-g) < num_std*car_std_g && abs(car_mean_b-b) < num_std*car_std_b
+                    elseif radius_x > 10 && radius_y > 10 && abs(car_mean_r-r) < num_std*car_std_r && abs(car_mean_g-g) < num_std*car_std_g && abs(car_mean_b-b) < num_std*car_std_b
                         tracking_data(idx,9) = 2;
                     elseif abs(bike_mean_r-r) < num_std*bike_std_r && abs(bike_mean_g-g) < num_std*bike_std_g && abs(bike_mean_b-b) < num_std*bike_std_b
                         tracking_data(idx,9) = 3;
@@ -142,7 +143,7 @@ for k = 1 : nframes
                     value3 = 0;
                 end
                 
-                if tracking_data(idx,9) == 1 || tracking_data(idx,9) == 2 || 1 == 1
+                if tracking_data(idx,9) == 1 || tracking_data(idx,9) == 2
                     taggedCars(top_left_y,top_left_x:top_right_x,1,k) = value1;
                     taggedCars(top_left_y,top_left_x:top_right_x,2,k) = value2;
                     taggedCars(top_left_y,top_left_x:top_right_x,3,k) = value3;
@@ -172,19 +173,42 @@ for k = 1 : nframes
             %end
         end
         
-%                 imshow(taggedCars(:,:,:,k));
-%         
-%                 for z = 1 : length(stats)
-%                     idx = z;
-%                     c = stats(idx).Centroid;
-%                     c = floor(fliplr(c));
-%         
-%                     text(c(2),c(1),{sprintf('%d',z)});
-%                 end
-%                 
-%                 if k > 1
-%                     F(k-1) = getframe;
-%                 end
+                imshow(taggedCars(:,:,:,k));
+        
+                for z = 1 : length(stats)
+                    idx = z;
+                    c = stats(idx).Centroid;
+                    c = floor(fliplr(c));
+                    r = stats(idx).BoundingBox;
+                    %rectangle('position',[c(2) c(1) 10 10], 'facecolor','r')
+                    
+                    if tracking_data(idx,9) == 1
+                        value1 = 255;
+                        value2 = 255;
+                        value3 = 0;
+                        text(c(2)-5,c(1)-5,{sprintf('%d',z)},'BackgroundColor',[value1/255 value2/255 value3/255]);
+                    elseif tracking_data(idx,9) == 2
+                        value1 = 255;
+                        value2 = 255;
+                        value3 = 255;
+                        text(c(2)-5,c(1)-5,{sprintf('%d',z)},'BackgroundColor',[value1/255 value2/255 value3/255]);
+%                     elseif tracking_data(idx,9) == 3
+%                         value1 = 255;
+%                         value2 = 0;
+%                         value3 = 0;
+%                     elseif tracking_data(idx,9) == 4
+%                         value1 = 255;
+%                         value2 = 0;
+%                         value3 = 0;
+                    end
+                    
+                    %text(c(2)-5,c(1)-5,{sprintf('%d',z)},'BackgroundColor',[value1/255 value2/255 value3/255]);
+                    
+                end
+                
+                if k > 1
+                    F(k-1) = getframe;
+                end
                 
 %                 temp123 = getframe;
 %                 temp123 = temp123.cdata;
@@ -202,13 +226,13 @@ for k = 1 : nframes
     
     k
 end
-
-% X = F
-% for i = 1 : length(X)
-% 	t = size(F(i).cdata);
-% 	if t(1) == 481 && t(2) == 721
-% 	
-% 	else
-% 		X(i) = []
-% 	end
-% end
+% 
+X = F
+for i = 1 : length(X)
+	t = size(F(i).cdata);
+	if t(1) == 481 && t(2) == 721
+	
+	else
+		X(i) = []
+	end
+end
