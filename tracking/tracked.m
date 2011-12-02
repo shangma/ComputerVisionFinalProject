@@ -65,13 +65,8 @@ while i< size(tracked,1)
         bike_std_g = 13;
         bike_std_b = 13;
         
-<<<<<<< Updated upstream
         radius_x = floor(trackedPoint(7)/2);
         radius_y = floor(trackedPoint(8)/2);
-=======
-        %scan around for it
-        
->>>>>>> Stashed changes
         
         bottomRightX = predictedX + radius_x;
         bottomRightY = predictedY + radius_y;
@@ -90,6 +85,7 @@ while i< size(tracked,1)
                     
                     [r,g,b] = rgb_mean(temp);
                     num_std = 1.5;
+                    num_std_cars = 1.1;
                     
                     tracked(i,1) = predictedX;
                     tracked(i,2) = predictedY;
@@ -99,7 +95,7 @@ while i< size(tracked,1)
                         tracked(i,4) = tracked(i,2);
                         %disp('Tracked');
                         break;
-                    elseif tracked(i,9) == 2 && abs(car_mean_r-r) < num_std*car_std_r && abs(car_mean_g-g) < num_std*car_std_g && abs(car_mean_b-b) < num_std*car_std_b
+                    elseif tracked(i,9) == 2 && abs(car_mean_r-r) < num_std_cars*car_std_r && abs(car_mean_g-g) < num_std_cars*car_std_g && abs(car_mean_b-b) < num_std_cars*car_std_b
                         tracked(i,3) = tracked(i,1);
                         tracked(i,4) = tracked(i,2);
                         %disp('Tracked');
