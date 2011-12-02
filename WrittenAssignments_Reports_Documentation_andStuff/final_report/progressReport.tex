@@ -62,28 +62,78 @@ In order to succesfully do this project, we broke it down into basic components 
 \section{METHODS USED}
 
 \subsection{Background Subtraction}
+The first obvious step in this project was to implement some sort of background subtraction. Doing so would provide the benefit of being able to clearly identify the moving objects, which would provide the baseline for all the subsequent steps. \newline
+
+We first took a rather basic approach: iterate through all of the frames and compute either a median or mean image, which would serve as the background in our background subtraction. Even after background stabilization, we would find that the mean image was rather blurry, so we used the median image. Apart from a the thin smear of cars across the road, the median image would look almost like an empty street. \newline
+
+In any case, the naive background without stabilization was really blurry; the edges were not clear because we tried to compute the background on frames that moved over time. \newline
+
+Nonetheless, we continued in our approach and performed a background subtraction on every image. The resulting video showed some promise. The video contained some unexpected parts of the image that were not supposed to be there (buildings, crosswalks, and other non-moving objects), but succeeded in picking up all the moving objects and removing much of the non-important parts of the image. \newline
+
 
 \subsubsection{Image Stabilization}
 
+To deal with the shakiness of the video, we then decided to stabilize the video prior to performing background subtraction. To do this, we implemented methods similar to those used in assignment two. First we computed the SIFT features for each of the images. Then computed a homography that corresponds the SIFT features of image i to the SIFT features of image 1. Finally, use the computed homography to warp image i onto the space of image 1. \newline
+
+The resulting images were such that each image adjusted itself so as to give the illusion that the camera is stable, and in most of these images, there were some black edges caused by the warping. Once we had a directory of stable images, we again performed background subtraction, this time using the stable images as opposed to the actual images of the original video. The result was much improved. There was significantly less exposure of static objects. \newline
+
+Still, however, the video was not quite perfect; although noise from the buildings and other static objects was significantly reduced, their mere presence would be a threat to object detection and tracking. To accommodate for the major sources of static object exposure, we applied a mask to parts of the video that we deemed to be unnecessary. This included the buildings in the background, the street crosswalk lines, and the lone taxi that is parked. After we did this, we decided that the resulting video was acceptable to perform detection and tracking on.\newline
+
 \subsubsection{Object Detection}
 
+
+
+stuff here
+
+
+
+
 \subsection{Categorization}
+
+
+
+
+
+
+Once we have a list of detected objects, we can then move on to classification. We used a simple method of color matching for our classification. We have a series of “training data” to be fed to our program. This training data serves the purpose of teaching our program what an object can be classified as. A statistical analysis is performed for each class of training data; that is, for each different type of object in the training data, we compute the mean RGB values and the standard deviation. Once we have the training data in place, we start classifying the detected objects. For example, if this object is within a threshold standard deviation for an object, then we classify it as that object. Note that we only have training data for white cars, taxis, and bicycles. We left out pedestrians from the training data because of the amount of variation that has to be accounted for: shirt color, hair color, skin color, etc. Also, given the very nature of the video, we decided that anything that is not a taxi, car, or bicycle will be classified as pedestrian. This makes sense because these are these four classes make up the large majority of the objects found in the video. \newline
+
+
+
 
 
 \subsection{Tracking}
 
 We came up with a relatively simple tracking algorithm to use on the moving objects in the video. It basically consists of three steps: First, we detect every possible object on the image. Second, there is a "tracking" step to update and maintain every object that we are already tracking. And finally third, there is a "registration" step for every object that is detected but is not a tracked object. 
+\newline
+
+
+\subsubsection{Detection Step}
+
+For a given image, the first thing we do is run our object detection code to find all of the potential moving objects in the frame. In the end, this will generate a set of coordinates and window sizes of possible objects. 
+\newline
+
 
 \subsubsection{Tracking Step}
 
+We take the set of detected objects and check with our maintained list of tracked objects. The matrix containing all of our tracked objects stores and keeps track of the previous two coordinates of the object, the size of the window around the object, and the classification of the object. We compute the predicted coordinate of where we expect the tracked object should be in this frame. \newline
+
+For each tracked object, we check if there exists a detected object that is really close to this predicted location. We do this by iterating through all of the detected object coordinates, computing each distance to our tracked object, choosing the point with the minimum distance, and then looking to see if this distance is below a threshold. If we believe that a detected object matches a tracked object, we update the coordinates stored in the tracked object and we delete the detected object from the set. \newline
+
+If no detected objects are near a tracked object, we then scan around the predicted location, looking for the tracked object just in case. Our detection algorithm relied on the data generated from the background subtraction, and so if a vehicle stops in the middle of the road, we wouldn't be able to detect it anymore. Using the window size and the classification of the object, we look to see if the object can still be detected using code inspired from our RGB classification program. \newline
+
+If we manage to find the object again this way, we then update the coordinates of the tracked object and move on. If we cannot find the object, we then delete the object from our list of tracked objects. \newline 
 
 \subsubsection{Registration Step}
+
+By this point, some of the detected objects should have been deleted because we determined that they were associated with a tracked object. We deal with the remaining detected objects by registering them. \newline
+
+Similar to the tracked objects, we have a list of registered objects that we are trying to track for a short period of time before we are confident enough that these are not noise, but objects worthy of being tracked.
 
 
 \section{RESULTS}
 
 
-\section{CONCLUSIONS}
+\section{CONCLUSION}
 
 
 \section{CODE INFORMATION}
@@ -97,28 +147,6 @@ We came up with a relatively simple tracking algorithm to use on the moving obje
 --------------------------------------------------------
 
 
-
-\subsection{Background Subtraction}
-From the image stack of the video provided, have gotten background subtraction working. It is a naive approach without us doing any sort of image stabilization, so the produced video is somewhat noisy; the buildings in the back and the crosswalk painted lines frequently appear. However, the vehicles passing by are pretty clearly defined and I think even from here, we could identify all the vehicles.
-
-\subsection{Image Stabilization}
-In order to get some nicer results, it would be nice if we could achieve some form of image stabilization. Currently, we plan on taking the sift features from every image and computing all the homographies required to warp every image to a single frame of reference. \newline
-
-We have currently computed the sift features for every image and we can compute the homographies between each of the images (using our implementations from homework 2). We can also compute and store all the homographies. With a little bit of more work, we should be able to properly warp each image with the corresponding homography. Hopefully, we will soon be able to produce an image stack full of stabilized images. If we can run our background subtraction on this, then we will have nicer and cleaner images to work with. \newline
-
-We have talked with a few other groups, and apparently they have had some trouble trying to get this approach to work. We are going to try out this method of image stabilization anyway because it might work out for us. However, if it doesn't, we will then try to stabilize our images using affine transformations.
-
-\subsection{Detection, Tracking, and Classification}
-Whether or not we sufficiently stabilize our images, we should be able to produce background subtraction footage, so that we can use it to detect, track, and classify moving objects. 
-
-\subsubsection{Detection}
-After background subtraction, we should then begin trying to detect all the moving images in our footage. Because moving images in our background subtraction is white while the background is black, we would like to use Window Based Object Detection to detect moving objects and draw bounding boxes around them.
- 
-\subsubsection{Tracking}
-After detection, we should then begin trying to track the moving objects in the video. Once again, we think it may be possible to use a modified version of Window Based Object Detection. We could assume that the bounding boxes around moving objects shouldn't move too much in between two frames of the video. We could say that if the bounding boxes of an object in two frames are really close together, then we could infer that the object is the same. 
-
-\subsubsection{Classification}
-After detection and tracking, we should then begin trying to identify the moving objects. For classification, we would like to use the "Bag of Words" approach. We would like to maintain a database of categorized images, which is a hash table storing SIFT features paired with a classified image. While we are tracking an object, we could also query our Bag of Words and categorize it.
 
 
 
