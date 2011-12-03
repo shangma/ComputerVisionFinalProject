@@ -50,7 +50,11 @@
 
 \section{INTRODUCTION}
 
-Our group chose to work on “Object Detection and Classification in a Video Sequence” as the final project for this course. The state purpose of this project was: given a video of a traffic intersection, recognize and classify the moving objects (cars, taxis, motorbikes, bicycles, pedestrians, etc). The final objective of this project was to produce a video in which these moving objects are identified and classified by bounding boxes. There were several challenges involved with this project, including but not limited to: shakiness of the video, motion detection, tracking, and classification. In this paper, we will summarize the approaches that we took towards dealing with these challenges and working towards our final objective. \newline
+Our group chose to work on “Object Detection and Classification in a Video Sequence” as the final project for this course. \newline
+
+The purpose of this project was: given a video of a traffic intersection, recognize and classify the moving objects (cars, taxis, motorbikes, bicycles, pedestrians, etc). The final objective of this project was to produce a video in which these moving objects are identified and classified by bounding boxes. \newline
+
+There were several challenges involved with this project, including but not limited to: shakiness of the video, motion detection, tracking, and classification. In this paper, we will summarize the approaches that we took towards dealing with these challenges and working towards our final objective. \newline
 
 
 In order to succesfully do this project, we broke it down into basic components of image detection, image categorization, and image tracking, and we created implementations for each of these steps. With everything put together, we produced some decent results. We were able to identify and even do some tracking on the objects that appear throughout the video. 
@@ -77,15 +81,21 @@ To deal with the shakiness of the video, we then decided to stabilize the video 
 
 The resulting images were such that each image adjusted itself so as to give the illusion that the camera is stable, and in most of these images, there were some black edges caused by the warping. Once we had a directory of stable images, we again performed background subtraction, this time using the stable images as opposed to the actual images of the original video. The result was much improved. There was significantly less exposure of static objects. \newline
 
-Still, however, the video was not quite perfect; although noise from the buildings and other static objects was significantly reduced, their mere presence would be a threat to object detection and tracking. To accommodate for the major sources of static object exposure, we applied a mask to parts of the video that we deemed to be unnecessary. This included the buildings in the background, the street crosswalk lines, and the lone taxi that is parked. After we did this, we decided that the resulting video was acceptable to perform detection and tracking on.\newline
+Still, however, the video was not quite perfect; although noise from the buildings and other static objects was significantly reduced, their mere presence would be a threat to object detection and tracking. To accommodate for the major sources of static object exposure, we applied a mask to parts of the video that we deemed to be unnecessary. Yes, we simply erased the noisy moving parts of the background. This included the buildings in back, the street crosswalk lines, and the lone taxi that is parked. After we did this, we decided that the resulting video was acceptable to perform detection and tracking on.\newline
 
 \subsubsection{Object Detection}
 
+After we produced the background subtraction images, we tried to detect all of the white blobs in each image as a moving object. \newline
 
+At first, we wrote our own function to try and implement Window Based Detection. We determined a window size and then slid it across the image. Each time, we then summed up all of the white pixels within the window. If the response was above a certain threshold, we marked the location as a detected object and moved on. \newline
 
-////////////////////////////////////////////////////////////////
+This lead to multiple detections on each white blob, so we also wrote an algorithm that would associate clustered detections together and return the "center" point as representative of the object. \newline
 
+For the record, this approach worked really well at detecting white blobs as objects. However this ran really slow because we were sliding the window over one pixel at a time. We improved the performance of this code considerably by skipping over a certain distance and examining every half frame or so. Still, trying to process several hundred frames took on the order of several hours. \newline
 
+We eventually discovered a MATLAB function called regionprops, and this function would automatically detect each of the white blobs and return their coordinates. We had to throw away all of the code we wrote previously for this task, because this function seemed to work a lot more efficiently than our algorithms. \newline
+
+Building around this function, we wrote our program that would take an image and detect all of the moving objects in the frame. \newline
 
 
 \subsection{Categorization}
@@ -98,13 +108,15 @@ Once we have "trained" and have this information in place, we start classifying 
 
 Also, we decided that anything that is not a taxi, car, or bicycle would be classified as pedestrian. We admit, this was a rather convienent approach that we took, because the pedestrians had somewhat little distinguishing color features. There were times when the pedestrians looked like a small blob of dark pixels. They would show up in the background subtraction images, but they did not have a very distinguishing RGB pattern.\newline
 
+When we implemented our tracking algorithm, we ended up categorizing a tracked object only once. When an object began being tracked, we categorized it right then and there. When we detected the same tracked object in a subsequent frame, if it had already been categorized we would not do it again. \newline
+
 
 
 
 
 \subsection{Tracking}
 
-We came up with a relatively simple tracking algorithm to use on the moving objects in the video. It basically consists of three steps: First, we detect every possible object on the image. Second, there is a "tracking" step to update and maintain every object that we are already tracking. And finally third, there is a "registration" step for every object that is detected but is not a tracked object. 
+We came up with a relatively simple tracking algorithm to use on the moving objects in the video. It basically consists of three steps: First, we detected every possible object on the image. Second, there was a "tracking" step to update and maintain every object that we were already tracking. And finally third, there was a "registration" step for every object that was detected but was not a tracked object. 
 \newline
 
 
