@@ -146,31 +146,50 @@ At the end, we iterate over our registered objects. We decrement any object that
 
 \section{RESULTS}
 
+\subsection{Thresholds}
+After we implemented each component of our project and tested them, it was a matter of tweaking the various thresholds and parameters that we used, trying to get the best results possible. \newline
+
+For example, when performing the background subtraction, objects would only appear on the resulting image if the difference between the original image and the background image was greater than a certain threshold. This helped to eliminate much of the noise that would otherwise be present if we did not use a threshold. \newline
+
+However, because of the challenges associated with the video (shaky camera, low resolution), background subtraction was not perfect. Increasing this threshold would eliminate more static object noise, but will also cause the moving objects to become less pronounced. Decreasing the threshold has the opposite effect. We experimented with the value until we were pretty bored, and we reached a result that we were satisfied with. \newline
+
+\subsection{Tracking}
+Before we implemented tracking, we tried to see what kind of results we would get if we simply tried to detect and classify in every frame. When we tried this, we obtained visible results that were quite flawed. Objects would come in and out of detection and would often change classification. There was also some noise in our detections. \newline
+
+After we implemented tracking, our results became much improved. Objects would not change classifications as much, and the issue of objects constantly becoming detected and undetected was significantly reduced. \newline
+
+However, we still ran into the problem of moving objects becoming untracked and some static objects becoming tracked. To fix this problem, we then went on to experiment with the classification parameters. Note that because of imperfect background subtraction, we detected a lot of noise. We tried accepting different multiples of the standard deviation values for each object class. This could affect our ability to distinguish one type of object from another. \newline
+
+In one case, there was a piece of concrete being constantly detected, classified, and tracked as a white car, and so we tried to make the requirements for being a car stricter. We also experimented with standard deviations thresholds in general; the higher the threshold, the easier it is for a detected object to be classified, and vise versa. \newline
+
+\subsection{Final Results}
+We were pretty satisfied with the final results that we obtained. We are able to eliminate most cases of false detections while still being able to detect most of the moving objects. Taxis and cars are generally detected easily. Pedestrian results were a bit messier; any false detection was usually associated with pedestrians. We unfortunately were not able to tackle the challenge of overlapping objects, and the results are reflected in the video. Objects may sometimes overlap and become one object and split up afterwards. Nonetheless, aside from these things, we feel that our results are acceptable. \newline
+
+
 
 \section{CONCLUSION}
+
+After we had "finished" implementing the main components of our project, we still worked for several days afterwards on modifying different thresholds and introducing small fixes and optimizations. Although we thought the final results looked pretty good, and we worked to significantly improved the results of our video, there are still plenty of things we could improve for our project. \newline
+
+
+\subsection{Improving Classification}
+What we currently do for classification is classify an object only once before tracking it. However, what if our classification was initially wrong and how could we recover from this? Well one approach could be: as we track the object, we classify it every time and store each classification we make on the tracked object. We could then "vote" on what kind of object we should classify the object as. \newline
+
+Secondly, our classification is currently based only on color. There are potentially several other factors that might make it more accurate. In addition to color, classification based on shape would be the most obvious improvement. For example, cars are wider than they are tall and pedestrians are taller than they are wide. \newline
+
+Also, given the setting of the video, classification based on speed could potentially be useful. Cars, bicycles, and pedestrians move in somewhat characteristic ways and at different speeds.Computing speed would be quite easy since we already keep past frame data as part of tracking, and it would simply be a matter of using this data for classification as well as tracking. \newline
+
+
+\subsection{Improving Tracking}
+We could improve tracking in a few several ways. For starters, we could keep track of more than the past two points in order to estimate where the tracked object should be in the current frame. Perhaps the past five points, or we could even try to keep track of every single previous location. \newline
+
+Also in the registration phase, in order to cut down on the noise further, we could increase the required successive detections for a registered object to become tracked. This could potentially take care of random noise that happens to get detected several times in the same location, and we could prevent it from becoming a tracked object. 
+
+\subsection{Closing Remarks}
+The video we were given was pretty shaky and the quality of the images were not all that terrific. Given this, I think our results were pretty decent at detecting, tracking, and classifying all the objects in the busy intersection. 
 
 
 \section{CODE INFORMATION}
-
-
-
---------------------------------------------------------
-
---- The old stuff is below this line
-
---------------------------------------------------------
-
-
-
-
-
-\section{CONCLUSION}
-So far, we have only gotten background subtraction working and we also have some functionality for image stabilization. Ahead of us, we will still need to do object detection, tracking, and classification, but I think we do have an idea of how we are going to go about accomplishing these tasks. 
-
-
-
-
-
 
 
 
