@@ -83,19 +83,20 @@ Still, however, the video was not quite perfect; although noise from the buildin
 
 
 
-stuff here
+////////////////////////////////////////////////////////////////
 
 
 
 
 \subsection{Categorization}
 
+Once we have a list of detected objects, we can then try to classify them. We used a simple method of color matching for our classification. We have a series of “training data” to be fed to our program. This training data serves the purpose of teaching our program what an object can be classified as. \newline
 
+Statistical analysis is performed for each class of training data. For each different type of object in the training data (Taxis, cars, pedestrians, etc), we take each RGB sample image and compute the mean R, G, and B values and standard deviations. For example, taxis seem to have about an average of 127, 132, and 111 RGB mean values with standard deviations of 13, 12, and 12 respectively. \newline
 
+Once we have "trained" and have this information in place, we start classifying the detected objects. For example, if a detected object was within a threshold of about a standard deviation for an object, then we could classify it as that object. Note that we only have training data for white cars, taxis, and bicycles. We left out pedestrians from the training data because of the amount of variation that has to be accounted for: shirt color, hair color, skin color, etc. \newline
 
-
-
-Once we have a list of detected objects, we can then move on to classification. We used a simple method of color matching for our classification. We have a series of “training data” to be fed to our program. This training data serves the purpose of teaching our program what an object can be classified as. A statistical analysis is performed for each class of training data; that is, for each different type of object in the training data, we compute the mean RGB values and the standard deviation. Once we have the training data in place, we start classifying the detected objects. For example, if this object is within a threshold standard deviation for an object, then we classify it as that object. Note that we only have training data for white cars, taxis, and bicycles. We left out pedestrians from the training data because of the amount of variation that has to be accounted for: shirt color, hair color, skin color, etc. Also, given the very nature of the video, we decided that anything that is not a taxi, car, or bicycle will be classified as pedestrian. This makes sense because these are these four classes make up the large majority of the objects found in the video. \newline
+Also, we decided that anything that is not a taxi, car, or bicycle would be classified as pedestrian. We admit, this was a rather convienent approach that we took, because the pedestrians had somewhat little distinguishing color features. There were times when the pedestrians looked like a small blob of dark pixels. They would show up in the background subtraction images, but they did not have a very distinguishing RGB pattern.\newline
 
 
 
@@ -127,8 +128,9 @@ If we manage to find the object again this way, we then update the coordinates o
 
 By this point, some of the detected objects should have been deleted because we determined that they were associated with a tracked object. We deal with the remaining detected objects by registering them. \newline
 
-Similar to the tracked objects, we have a list of registered objects that we are trying to track for a short period of time before we are confident enough that these are not noise, but objects worthy of being tracked.
+Similar to the tracked objects, we have a list of registered objects that we are trying to track for a short period of time before we are confident enough that these are not noise, but objects worthy of being tracked. For each registered object, we also iterate over the list of detected objects, trying to determine if there exists a detected object that is close to a registered object. If we find a match, we then update the registered object (its coordinates and the number of times we have detected it) and then delete the corresponding detected object. \newline
 
+At the end, we iterate over our registered objects. We decrement any object that had not been updated in this step. If any of the counters arrive at zero at this point, it is deleted from the list (it must have been random noise or something). If any of them had been detected three or more times by this point, we move the object from the registered list to the tracking list. Any remaining detected objects at this point are added to the registered list. \newline
 
 \section{RESULTS}
 
