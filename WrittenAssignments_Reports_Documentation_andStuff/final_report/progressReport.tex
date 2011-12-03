@@ -186,10 +186,30 @@ We could improve tracking in a few several ways. For starters, we could keep tra
 Also in the registration phase, in order to cut down on the noise further, we could increase the required successive detections for a registered object to become tracked. This could potentially take care of random noise that happens to get detected several times in the same location, and we could prevent it from becoming a tracked object. 
 
 \subsection{Closing Remarks}
-The video we were given was pretty shaky and the quality of the images were not all that terrific. Given this, I think our results were pretty decent at detecting, tracking, and classifying all the objects in the busy intersection. 
+The video we were given was pretty shaky and the quality of the images were not all that terrific. Given this, I think our results were pretty decent at detecting, tracking, and classifying all the objects in the busy intersection. \newline
 
+As a group, we feel good that we have worked hard and done well, and we believe that even though we used a series of relatively simple and naive approaches, we have produced surprisingly good results.
+
+\newpage
 
 \section{CODE INFORMATION}
+
+\subsection{The image stack}
+In order to conserve space in our submission, we have not included the original image stack of the video (originally provided by Padoy on Blackboard). \newline
+
+In the main directory containing all of our code, please make sure you include the directory containing the entire stack of images of the video, and make sure that it is named "traffic-images" \newline
+
+\subsection{Running our project}
+In order to run our project, please open up MATLAB and run "main.m". We have rearranged our code such that the entire project will begin running when you call it. The image stabilization part (using SIFT features and RANSAC to compute Homographies) will probably be the part the runs the slowest. \newline
+
+\subsection{If all else fails}
+If something terrible happens when trying to run our project, or if you would like not to wait a very long time for all the images to be processed and the video to be generated, we still have our video that you can see. \newline
+
+It will be available at 
+
+"http://www.acm.jhu.edu/~juneki/Vision/"
+
+And it will be a video file titled "tracking.avi"
 
 
 
